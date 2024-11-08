@@ -20,17 +20,14 @@ public class LevelManager : MonoBehaviour
     private IEnumerator LoadSceneAsync(string sceneName)
     {
         animator.enabled = true;
-        // Play animation if needed
         if (animator != null)
         {
         }
 
-        // Wait for the animation to finish
-        yield return new WaitForSeconds(2f); // Adjust the wait time to match the animation duration
+        yield return new WaitForSeconds(1f);
 
-        // Load the scene asynchronously
-        animator.SetTrigger("Finished");
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
+        animator.SetTrigger("Finish");
 
         while (!asyncOperation.isDone)
         {
