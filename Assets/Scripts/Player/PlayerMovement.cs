@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Vector2 timeToFullSpeed = new Vector2(1, 1);
     [SerializeField] private Vector2 timeToStop = new Vector2(0.5f, 0.5f);
     [SerializeField] private Vector2 stopClamp = new Vector2(2.5f, 2.5f);
+    [SerializeField] [Range(0, 50)] private float padding = 2f; // New padding variable
 
     private Vector2 moveDirection;
     private Vector2 moveVelocity;
@@ -46,6 +47,25 @@ public class PlayerMovement : MonoBehaviour
             Mathf.Clamp(rb.velocity.x, -maxSpeed.x, maxSpeed.x),
             Mathf.Clamp(rb.velocity.y, -maxSpeed.y, maxSpeed.y)
         );
+
+        // Apply boundary restriction
+        MoveBound();
+    }
+
+    public void MoveBound()
+    {
+        // Calculate screen boundaries with padding in world coordinates
+        Vector2 minBound = Camera.main.ViewportToWorldPoint(new Vector2(padding / 260f, padding / 280f));
+        Vector2 maxBound = Camera.main.ViewportToWorldPoint(new Vector2(1 - padding / 250f, 1 - padding / 85f));
+
+        // Clamp the player's position within these bounds
+        Vector2 clampedPosition = new Vector2(
+            Mathf.Clamp(transform.position.x, minBound.x, maxBound.x),
+            Mathf.Clamp(transform.position.y, minBound.y, maxBound.y)
+        );
+
+        // Apply the clamped position back to the transform
+        transform.position = clampedPosition;
     }
 
     public Vector2 GetFriction()
@@ -56,13 +76,5 @@ public class PlayerMovement : MonoBehaviour
     public bool IsMoving()
     {
         return rb.velocity.magnitude > 0.01f;
-    }
-
-    public void MoveBound()
-    {
-        Vector3 pos = transform.position;
-        pos.x = Mathf.Clamp(pos.x, -9f, 9f); 
-        pos.y = Mathf.Clamp(pos.y, -5f, 5f); 
-        transform.position = pos;
     }
 }
