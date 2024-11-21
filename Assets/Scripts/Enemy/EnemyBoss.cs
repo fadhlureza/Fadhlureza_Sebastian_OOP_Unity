@@ -1,73 +1,59 @@
-
-// EnemyBoss: bergerak secara horizontal dan memantul ketika mencapai batas layar
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyBoss : Enemy
 {
-    public float speed = 3f;
-    public float spawnInterval = 10f; // Interval spawn untuk Boss
-    public float spawnRangeY = 5f; // Rentang spawn Y
-    public int maxEnemies = 1; // Hanya satu Boss
+    // ...existing code...
+    public float speed = 5f;
+    public Weapon weapon; // Tambahkan properti weapon
+    private Vector3 direction;
 
-    public GameObject bulletPrefab;
-    public float fireRate = 1f;
-    private float nextFireTime = 0f;
-
-    private Vector2 direction;
-
+    private Vector3 spawnPoint;
+    private AttackComponent attackComponent; // Tambahkan properti attackComponent
+    
     void Start()
     {
-        if (GameObject.FindGameObjectsWithTag("EnemyBoss").Length <= 1)
+        // ...existing code...
+
+        attackComponent = GetComponent<AttackComponent>(); // Initialize AttackComponent
+        Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+        if (Random.value > 0.5f)
         {
-            InvokeRepeating("SpawnEnemy", 0f, spawnInterval);
+            spawnPoint = new Vector3(-screenBounds.x + 1, Random.Range(-screenBounds.y + 3f, screenBounds.y), 0);
+            direction = Vector3.left;
         }
-
-        direction = Vector2.left;
-    }
-
-    void SpawnEnemy()
-    {
-        if (GameObject.FindGameObjectsWithTag("EnemyBoss").Length < maxEnemies)
+        else
         {
-            float spawnPositionX = Random.value > 0.5f ? 10f : -10f;
-            float spawnPositionY = Random.Range(-spawnRangeY, spawnRangeY);
-
-            Instantiate(gameObject, new Vector2(spawnPositionX, spawnPositionY), Quaternion.identity);
+            spawnPoint = new Vector3(screenBounds.x - 1, Random.Range(-screenBounds.y + 3f, screenBounds.y), 0);
+            direction = Vector3.right;
         }
+        transform.position = spawnPoint;
+        weapon = GetComponent<Weapon>(); // Inisialisasi weapon
     }
 
     void Update()
     {
+        // Move the enemy
         transform.Translate(direction * speed * Time.deltaTime);
 
-        // Jika sudah melewati batas layar, ubah arah gerak
-        if (Mathf.Abs(transform.position.x) > 10f)
+        // Check if the enemy is off the screen and reverse direction
+        Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+
+        if (transform.position.x > screenBounds.x)
         {
             direction = -direction;
         }
-
-        if (Time.time >= nextFireTime)
+        else if (transform.position.x < -screenBounds.x)
         {
-            FireWeapon();
-            nextFireTime = Time.time + fireRate;
+            direction = -direction;
+        }
+        Shoot(); // Panggil metode untuk menembak
+    }
+
+    void Shoot()
+    {
+        if (weapon != null)
+        {
+            // weapon.Shoot(); // Gunakan metode Fire dari weapon
         }
     }
-
-    void FireWeapon()
-    {
-        Debug.Log("Menembak!"); // Tambahkan untuk melihat di konsol
-        Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Bullet")) // Pastikan Bullet memiliki tag "Bullet"
-        {
-            Destroy(collision.gameObject); // Hancurkan bullet
-            Destroy(gameObject); // Hancurkan enemy
-        }
-    }
-
 }

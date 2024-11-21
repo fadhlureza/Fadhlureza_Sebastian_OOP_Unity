@@ -1,59 +1,53 @@
-// EnemyForward: bergerak dari atas ke bawah dan memantul ketika mencapai batas layar
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class EnemyForward : Enemy
 {
-    public float speed = 5f; // Kecepatan gerak Enemy
-    public float spawnInterval = 5f; // Interval spawn
-    public float spawnRangeX = 5f; // Rentang spawn X
-    public int maxEnemies = 3; // Maksimum musuh aktif
-
-    private Vector2 direction;
+    public float speed = 5f;
+    private Vector3 direction;
+    private Vector3 spawnPoint;
+    public int health = 3; // Add health property
 
     void Start()
     {
-        // Hanya instance pertama yang menjalankan spawn berkala
-        if (GameObject.FindGameObjectsWithTag("EnemyForward").Length <= 1)
-        {
-            InvokeRepeating("SpawnEnemy", 0f, spawnInterval);
-        }
+        Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
 
-        direction = Vector2.down;
-    }
+        spawnPoint = new Vector3(Random.Range(-screenBounds.x, screenBounds.x), screenBounds.y + 1, 0);
+        direction = Vector3.down;
 
-    void SpawnEnemy()
-    {
-        // Cek jumlah musuh aktif agar tidak melebihi batas
-        if (GameObject.FindGameObjectsWithTag("EnemyForward").Length < maxEnemies)
-        {
-            float spawnPositionX = Random.Range(-spawnRangeX, spawnRangeX);
-            float spawnPositionY = 3f;
-
-            GameObject newEnemy = Instantiate(gameObject, new Vector2(spawnPositionX, spawnPositionY), Quaternion.identity);
-            EnemyForward enemyScript = newEnemy.GetComponent<EnemyForward>();
-            enemyScript.direction = Vector2.down;
-        }
+        transform.position = spawnPoint;
     }
 
     void Update()
     {
+        // Move the enemy
         transform.Translate(direction * speed * Time.deltaTime);
 
-        // Jika sudah melewati batas layar, ubah arah gerak
-        if (transform.position.y < -4.5f || transform.position.y > 5.5f)
+        // Check if the enemy is off the screen and reset to spawn point
+        Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+
+        if (transform.position.y < -screenBounds.y)
         {
-            direction = -direction;
+            transform.position = spawnPoint;
+            transform.position = new Vector3(Random.Range(-screenBounds.x, screenBounds.x), screenBounds.y + 1, 0);
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            Destroy(gameObject);
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Bullet")) // Pastikan Bullet memiliki tag "Bullet"
+        if (collision.CompareTag("Bullet"))
         {
-            Destroy(collision.gameObject); // Hancurkan bullet
-            Destroy(gameObject); // Hancurkan enemy
+
+            Destroy(collision.gameObject); // Destroy the bullet
         }
     }
 }

@@ -1,66 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
+using System.Collections;
 
 public class EnemyHorizontal : Enemy
 {
-    public float speed = 5f; // Kecepatan gerak Enemy
-    public float spawnInterval = 5f; // Interval spawn
-    public float spawnRangeY = 5f; // Rentang spawn Y
-    public int maxEnemies = 3; // Maksimum musuh aktif
+    public float speed = 5f;
+    private Vector3 direction;
+    private Vector3 spawnPoint;
 
-    private Vector2 direction;
+    private SpriteRenderer spriteRenderer; // Add SpriteRenderer reference
+    private InvincibilityComponent invincibilityComponent; // Add Invincibility reference
+    private AttackComponent attackComponent; // Add AttackComponent reference
 
     void Start()
     {
-        // Hanya instance pertama yang menjalankan spawn berkala
-        if (GameObject.FindGameObjectsWithTag("EnemyHorizontal").Length <= 1)
+        spriteRenderer = GetComponent<SpriteRenderer>(); // Initialize SpriteRenderer
+        invincibilityComponent = GetComponent<InvincibilityComponent>(); // Initialize Invincibility
+        attackComponent = GetComponent<AttackComponent>(); // Initialize AttackComponent
+        Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+        if (Random.value > 0.5f)
         {
-            InvokeRepeating("SpawnEnemy", 0f, spawnInterval);
+            spawnPoint = new Vector3(-screenBounds.x + 1, Random.Range(-screenBounds.y + 1f, screenBounds.y), 0);
+            direction = Vector3.left;
         }
-
-        // Tentukan arah gerak berdasarkan posisi awal
-        float spawnPositionX = transform.position.x;
-        direction = spawnPositionX < 0 ? Vector2.right : Vector2.left;
-    }
-
-    void SpawnEnemy()
-    {
-        // Cek jumlah musuh aktif agar tidak melebihi batas
-        if (GameObject.FindGameObjectsWithTag("EnemyHorizontal").Length < maxEnemies)
+        else
         {
-            // Tentukan posisi spawn acak di kiri atau kanan layar
-            float spawnPositionX = Random.value > 0.5f ? -10f : 10f;
-            float spawnPositionY = Random.Range(-spawnRangeY, spawnRangeY);
-
-            // Buat instance musuh baru dengan posisi spawn yang ditentukan
-            GameObject newEnemy = Instantiate(gameObject, new Vector2(spawnPositionX, spawnPositionY), Quaternion.identity);
-            EnemyHorizontal enemyScript = newEnemy.GetComponent<EnemyHorizontal>();
-
-            // Atur arah gerak musuh berdasarkan posisi spawn
-            enemyScript.direction = spawnPositionX < 0 ? Vector2.right : Vector2.left;
+            spawnPoint = new Vector3(screenBounds.x - 1, Random.Range(-screenBounds.y + 1f, screenBounds.y), 0);
+            direction = Vector3.right;
         }
+        transform.position = spawnPoint;
     }
 
     void Update()
     {
-        // Gerakkan EnemyHorizontal
+        // Move the enemy
         transform.Translate(direction * speed * Time.deltaTime);
 
-        // Jika sudah melewati batas layar, ubah arah gerak
-        if (Mathf.Abs(transform.position.x) > 10f)
+        // Check if the enemy is off the screen and reverse direction
+        Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+
+        if (transform.position.x > screenBounds.x)
+        {
+            direction = -direction;
+        }
+        else if (transform.position.x < -screenBounds.x)
         {
             direction = -direction;
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Bullet")) // Pastikan Bullet memiliki tag "Bullet"
-        {
-            Destroy(collision.gameObject); // Hancurkan bullet
-            Destroy(gameObject); // Hancurkan enemy
-        }
-    }
-
+    // public void TakeDamage(int damage)
+    // {
+    //     health -= damage;
+    //     Debug.Log("Health: " + health);
+    //     invincibilityComponent.StartInvincibility(); // Use Invincibility component's Blink method
+    //     if (health <= 0)
+    //     {
+    //         Destroy(gameObject);
+    //     }
+    // }
 }
