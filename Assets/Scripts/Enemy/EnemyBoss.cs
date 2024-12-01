@@ -2,19 +2,16 @@ using UnityEngine;
 
 public class EnemyBoss : Enemy
 {
-    // ...existing code...
-    public float speed = 5f;
-    public Weapon weapon; // Tambahkan properti weapon
-    private Vector3 direction;
+    public float speed = 5f;         // Kecepatan gerak
+    public Weapon weapon;           // Referensi ke weapon
+    private Vector3 direction;      // Arah gerak
+    private Vector3 spawnPoint;     // Titik spawn
+    private float shootCooldown = 2f; // Waktu jeda antar tembakan
+    private float shootTimer = 0f;  // Timer untuk menghitung jeda
 
-    private Vector3 spawnPoint;
-    private AttackComponent attackComponent; // Tambahkan properti attackComponent
-    
     void Start()
     {
-        // ...existing code...
-
-        attackComponent = GetComponent<AttackComponent>(); // Initialize AttackComponent
+        // Tentukan posisi spawn dan arah gerak
         Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
         if (Random.value > 0.5f)
         {
@@ -27,33 +24,51 @@ public class EnemyBoss : Enemy
             direction = Vector3.right;
         }
         transform.position = spawnPoint;
-        weapon = GetComponent<Weapon>(); // Inisialisasi weapon
+
+        // Inisialisasi weapon jika belum diset di Inspector
+        if (weapon == null)
+        {
+            weapon = GetComponent<Weapon>();
+            if (weapon == null)
+            {
+                Debug.LogError("Weapon component not found on EnemyBoss!");
+            }
+        }
     }
 
     void Update()
     {
-        // Move the enemy
+        // Gerakkan EnemyBoss
         transform.Translate(direction * speed * Time.deltaTime);
 
-        // Check if the enemy is off the screen and reverse direction
+        // Deteksi apakah keluar dari layar dan ubah arah
         Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+        if (transform.position.x > screenBounds.x || transform.position.x < -screenBounds.x)
+        {
+            direction = -direction;
+        }
 
-        if (transform.position.x > screenBounds.x)
+        // Perbarui timer dan tembak jika cooldown selesai
+        shootTimer += Time.deltaTime;
+        if (shootTimer >= shootCooldown)
         {
-            direction = -direction;
+            Shoot();
+            shootTimer = 0f; // Reset timer setelah menembak
         }
-        else if (transform.position.x < -screenBounds.x)
-        {
-            direction = -direction;
-        }
-        Shoot(); // Panggil metode untuk menembak
     }
 
     void Shoot()
     {
         if (weapon != null)
         {
-            // weapon.Shoot(); // Gunakan metode Fire dari weapon
+            Debug.Log("EnemyBoss is attempting to shoot."); // Debug untuk cek apakah Shoot dipanggil
+            weapon.Shoot();
+        }
+        else
+        {
+            Debug.LogWarning("Weapon is null; EnemyBoss cannot shoot.");
         }
     }
+
+
 }

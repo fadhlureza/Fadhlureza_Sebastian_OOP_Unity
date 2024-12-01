@@ -49,14 +49,4 @@ public class EnemyHorizontal : Enemy
         }
     }
 
-    // public void TakeDamage(int damage)
-    // {
-    //     health -= damage;
-    //     Debug.Log("Health: " + health);
-    //     invincibilityComponent.StartInvincibility(); // Use Invincibility component's Blink method
-    //     if (health <= 0)
-    //     {
-    //         Destroy(gameObject);
-    //     }
-    // }
 }

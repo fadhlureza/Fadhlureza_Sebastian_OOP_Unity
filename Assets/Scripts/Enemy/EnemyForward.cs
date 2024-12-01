@@ -50,4 +50,7 @@ public class EnemyForward : Enemy
             Destroy(collision.gameObject); // Destroy the bullet
         }
     }
+
 }
+
+

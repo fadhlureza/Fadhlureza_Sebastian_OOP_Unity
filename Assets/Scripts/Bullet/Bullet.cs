@@ -18,9 +18,9 @@ public class Bullet : MonoBehaviour
 
     void OnEnable()
     {
-        // Memberikan kecepatan pada Bullet setiap kali aktif
-        rb.velocity = transform.up * bulletSpeed;
+        rb.velocity = transform.up * bulletSpeed; // Transform.up digunakan untuk arah
     }
+
 
     public void SetPool(IObjectPool<Bullet> bulletPool)
     {

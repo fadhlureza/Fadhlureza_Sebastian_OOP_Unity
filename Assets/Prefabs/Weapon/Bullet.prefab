@@ -209,8 +209,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4386910d7985ab4448372a6b2faeb353, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 0}
   damage: 100
+  bullet: {fileID: 0}
 --- !u!114 &-2656873984102518981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,3 +223,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6441ae31f6b775c41991fd6e472de976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: {fileID: 0}

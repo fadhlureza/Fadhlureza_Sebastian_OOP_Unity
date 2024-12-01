@@ -52,11 +52,23 @@ public class Weapon : MonoBehaviour
 
     private void OnGetBullet(Bullet bullet)
     {
-        // Mengatur posisi bullet di bulletSpawnPoint dan mengaktifkannya
         bullet.transform.position = bulletSpawnPoint.position;
         bullet.transform.rotation = bulletSpawnPoint.rotation;
+
+        // Tentukan arah peluru berdasarkan pengguna Weapon
+        if (gameObject.CompareTag("EnemyBoss"))
+        {
+            bullet.transform.up = new Vector3(0, -1, 0);  // Arahkan peluru ke bawah secara manual
+
+        }
+        else if (gameObject.CompareTag("Player"))
+        {
+            bullet.transform.up = transform.up; // Player mengarah ke atas
+        }
+
         bullet.gameObject.SetActive(true);
     }
+
 
     private void OnReleaseBullet(Bullet bullet)
     {
@@ -68,7 +80,7 @@ public class Weapon : MonoBehaviour
         Destroy(bullet.gameObject);
     }
 
-    private void Shoot()
+    public void Shoot()
     {
         // Mendapatkan bullet dari pool dan meletakkannya di bulletSpawnPoint
         objectPool.Get();

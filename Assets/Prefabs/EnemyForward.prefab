@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4401b5c1623232c44ab4c73b763361e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Level: 0
+  level: 1
   speed: 2
   health: 3
 --- !u!61 &1754026978213254613
@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7c2339e9c93b104e85a378f10a32ff5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 400
+  maxHealth: 250
   health: 0
 --- !u!114 &7949372999676258910
 MonoBehaviour:

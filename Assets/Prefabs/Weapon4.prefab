@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8924061541245390311
 Transform:
   m_ObjectHideFlags: 0
@@ -119,4 +119,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 923835bfe8d17e94281fae181b8e0e82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentTransform: {fileID: 0}
+  shootIntervalInSeconds: 0.2
+  bulletPrefab: {fileID: 5529477444473744883, guid: d5bfb5244d1ad424e81c430af86edd5e, type: 3}
+  bulletSpawnPoint: {fileID: 0}

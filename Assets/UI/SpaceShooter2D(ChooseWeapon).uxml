@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:VisualElement name="Judul" style="flex-grow: 1; padding-top: 10%; padding-right: 10%; padding-bottom: 90%; padding-left: 10%;">
+            <ui:Label tabindex="-1" text="Space Shooter 2D" parse-escape-sequences="true" display-tooltip-when-elided="true" style="align-items: center; justify-content: center; -unity-text-align: middle-center; color: rgb(255, 255, 255);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
